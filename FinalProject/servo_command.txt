@@ -1,0 +1,18 @@
+import serial
+import time
+import os
+
+arduino = serial.Serial('COM5', 9600)  # Your Arduino port
+last_cmd = ""
+
+while True:
+    if os.path.exists("servo_command.txt"):
+        with open("servo_command.txt", "r") as f:
+            cmd = f.read().strip()
+        if cmd and cmd != last_cmd:
+            arduino.write((cmd + "\n").encode())
+            last_cmd = cmd
+            print(f"Sent to Arduino: {cmd}")
+            # Clear the file after sending
+            open("servo_command.txt", "w").close()
+    time.sleep(0.2)
